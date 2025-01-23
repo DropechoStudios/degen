@@ -34,8 +34,8 @@ class ConvChain {
 					height: n
 				}, true);
 				var p = Pattern.init(n, rect);
-				for (h in 0...p.hashes.length) {
-					weights[p.hashes[h]] += 1;
+				for (h in 0...p._hashes.length) {
+					weights[p._hashes[h]] += 1;
 				}
 			}
 		}

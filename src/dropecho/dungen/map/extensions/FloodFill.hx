@@ -2,7 +2,8 @@ package dropecho.dungen.map.extensions;
 
 using Lambda;
 
-import haxe.ds.IntMap;
+import dropecho.ds.Set;
+import dropecho.ds.Queue;
 import dropecho.dungen.Map2d;
 
 @:expose("dungen.FloodFill")
@@ -13,34 +14,34 @@ class FloodFill {
 		y:Int,
 		value:Int = 0,
 		diagonal:Bool = true
-	):Array<Tile2d> {
-		var visited = new IntMap<Tile2d>();
-		var queue = new Array<Tile2d>();
-		var neighbors = new Array<Tile2d>();
+	):Set<Tile2d> {
+		var visited = new Set<Tile2d>(t -> map.XYtoIndex(t.x, t.y));
+		var queue = new Queue<Tile2d>();
 
-		var currentTile = map.IndexToXY(map.XYtoIndex(x, y));
-		queue.push(currentTile);
+		var current = new Tile2d(x, y, 0);
+		queue.enqueue(current);
 
-		function whereHasNotBeenVisited(tile) {
-			return visited.get(map.XYtoIndex(tile.x, tile.y)) == null;
+		inline function whereHasNotBeenVisited(tile) {
+			return !visited.exists(tile);
 		}
 
-		function whereTileIsSameType(tile) {
+		inline function whereTileIsSameType(tile) {
 			return map.get(tile.x, tile.y) == value;
 		}
 
+		// While we have tiles in the queue,
+		// Search the neighbors for ones that have not been visited, and are the
+		// same type we are trying to fill.
 		while (queue.length > 0) {
-			currentTile = queue.pop();
+			current = queue.dequeue();
+			visited.add(current);
 
-			visited.set(map.XYtoIndex(currentTile.x, currentTile.y), currentTile);
-			neighbors = map
-				.getNeighbors(currentTile.x, currentTile.y, 1, diagonal)
-				.filter(whereHasNotBeenVisited)
-				.filter(whereTileIsSameType);
-
-			queue = queue.concat(neighbors);
+			queue.enqueueMany(map
+				.getNeighbors(current.x, current.y, 1, diagonal)
+				.filter(tile -> whereHasNotBeenVisited(tile) && whereTileIsSameType(tile))
+			);
 		}
 
-		return visited.array();
+		return visited;
 	}
 }

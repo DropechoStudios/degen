@@ -5,8 +5,8 @@ using dropecho.dungen.map.Map2dExtensions;
 
 @:expose("dungen.Pattern")
 class Pattern extends Map2d {
-	public var patterns:Array<Array<Int>> = new Array<Array<Int>>();
-	public var hashes:Array<Int> = new Array<Int>();
+	public var _variations:Array<Array<Int>> = new Array<Array<Int>>();
+	public var _hashes:Array<Int> = new Array<Int>();
 
 	public function new(size:Int, initTileData:Int = 0) {
 		super(size, size, initTileData);
@@ -20,7 +20,7 @@ class Pattern extends Map2d {
 	}
 
 	public function indexToMap(index:Int = 0):Map2d {
-		return this.clone(this.patterns[index]);
+		return this.clone(this._variations[index]);
 	}
 
 	public function matchesIndex(map:Map2d, x:Int, y:Int, tileToIgnore:Int = -1):Int {
@@ -32,8 +32,8 @@ class Pattern extends Map2d {
 		});
 		var match = false;
 
-		for (p in 0...patterns.length) {
-			var pattern = patterns[p];
+		for (p in 0..._variations.length) {
+			var pattern = _variations[p];
 
 			for (tile in 0...pattern.length) {
 				match = toMatch[tile] == pattern[tile] || pattern[tile] == tileToIgnore;
@@ -93,13 +93,13 @@ class Pattern extends Map2d {
 		variations[6] = reflect(variations[2]);
 		variations[7] = reflect(variations[3]);
 
-		hashes[0] = hash(variations[0]);
-		patterns[0] = variations[0];
+		_hashes[0] = hash(variations[0]);
+		_variations[0] = variations[0];
 
 		for (i in 1...8) {
 			if (symmetry & i != 0) {
-				hashes[i] = hash(variations[i]);
-				patterns[i] = variations[i];
+				_hashes[i] = hash(variations[i]);
+				_variations[i] = variations[i];
 			}
 		}
 	}

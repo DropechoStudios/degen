@@ -3,6 +3,7 @@
 -lib dropecho.interop
 
 -cp src
+-D analyzer-optimize
 -D dce=no
 
 --macro include('', true, null, ['src'])
@@ -18,8 +19,8 @@ targets/js.hxml
 targets/js-esm.hxml
 
 ## CS BUILD
---next
-targets/cs.hxml
+# --next
+# targets/cs.hxml
 
 # # Docs BUILD
 # --next

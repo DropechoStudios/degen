@@ -1,5 +1,6 @@
 package dropecho.dungen.generators;
 
+import seedyrng.Random;
 import dropecho.interop.Extender;
 import dropecho.ds.BSPTree;
 import dropecho.ds.BSPNode;
@@ -11,6 +12,9 @@ class RoomParams {
 	public var tileFloor:Int = 1;
 	public var tileWall:Int = 0;
 	public var padding:Int = 0;
+
+	public var minWidth:Int = 1;
+	public var minHeight:Int = 1;
 
 	public function new() {};
 }
@@ -30,26 +34,41 @@ class RoomGenerator {
 				return true;
 			}
 
-			var lPad = Std.int(params.padding / 2);
+			var lPad = Std.int(params.padding / 2) + params.padding % 2;
 			var rPad = Std.int(params.padding / 2) + params.padding % 2;
 
-			var roomStartX:Int = node.value.x + 1 + lPad;
-			var roomStartY:Int = node.value.y + 1 + lPad;
-			var roomEndX:Int = (node.value.x + node.value.width) - 1 - rPad;
-			var roomEndY:Int = (node.value.y + node.value.height) - 1 - rPad;
+			var startX:Int = node.value.x + lPad;
+			var startY:Int = node.value.y + lPad;
+			var endX:Int = (node.value.x + node.value.width) - rPad;
+			var endY:Int = (node.value.y + node.value.height) - rPad;
 
-			if (roomStartX != 1) {
-				roomStartX -= 1;
-			}
-			if (roomStartY != 1) {
-				roomStartY -= 1;
+			for (x in startX...endX) {
+				for (y in startY...endY) {
+					map.set(x, y, 2);
+				}
 			}
 
-			for (x in roomStartX...roomEndX) {
-				for (y in roomStartY...roomEndY) {
+			var random = new Random();
+			var w = node.value.width;
+			var h = node.value.height;
+			var mw = params.minWidth;
+			var mh = params.minHeight;
+
+			startX = startX + random.randomInt(0, w - mw - params.padding);
+			startY = startY + random.randomInt(0, h - mh - params.padding);
+			endX = startX + random.randomInt(mw, (endX - startX));
+			endY = startY + random.randomInt(mh, (endY - startY));
+
+			for (x in startX...endX) {
+				for (y in startY...endY) {
 					map.set(x, y, params.tileFloor);
 				}
 			}
+
+			node.value.x = startX;
+			node.value.y = startY;
+			node.value.width = endX - startX;
+			node.value.height = endY - startY;
 
 			return true;
 		}

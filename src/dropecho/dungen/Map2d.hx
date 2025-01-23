@@ -70,8 +70,12 @@ class Map2d {
 		}
 	}
 
-	inline public function tiles():TileIterator {
+	inline public function iterator():TileIterator {
 		return new TileIterator(this);
+	}
+
+	inline public function tiles():TileIterator {
+		return iterator();
 	}
 
 	/**
@@ -85,13 +89,17 @@ class Map2d {
 		return (_width * y) + x;
 	}
 
+	inline public function tileToIndex(tile:Tile2d):Int {
+		return XYtoIndex(tile.x, tile.y);
+	}
+
 	/**
 	 * Return a Tile2d ({x,y} object), for the given array index.
 	 * @param index The index to change into an x,y position.
 	 * @return The object with the x,y coords.
 	 */
 	public inline function IndexToXY(index:Int):Tile2d {
-		var x = Std.int(index % _width);
+		var x = index % _width;
 		var y = Std.int(index / _width);
 		return new Tile2d(x, y);
 	}

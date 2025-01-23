@@ -1,11 +1,13 @@
 package dropecho.dungen.map.extensions;
 
+import dropecho.ds.Set;
 import dropecho.dungen.Map2d;
 
 using dropecho.dungen.map.extensions.GetFirstTileOfType;
 using dropecho.dungen.map.extensions.FloodFill;
 using dropecho.dungen.map.Map2dExtensions;
 using dropecho.dungen.map.extensions.Neighbors;
+using Lambda;
 
 @:expose("dungen.RegionManager")
 class RegionManager {
@@ -20,18 +22,18 @@ class RegionManager {
 	public static function removeIslandsBySize(map:Map2d, size:Int = 4, tileType:Int = 1):Map2d {
 		var cleanedMap = new Map2d(map._width, map._height);
 		var nextTile:Tile2d;
-		var visited = new Array<Tile2d>();
+		var visited = new Set<Tile2d>(t -> cleanedMap.XYtoIndex(t.x, t.y));
 
 		for (i in 0...map._mapData.length) {
 			cleanedMap._mapData[i] = map._mapData[i];
 		}
 
-		while ((nextTile = cleanedMap.getFirstTileOfType(tileType, visited)) != null) {
+		while ((nextTile = cleanedMap.getFirstTileOfTypeSet(tileType, visited)) != null) {
 			var tiles = cleanedMap.floodFill(nextTile.x, nextTile.y, tileType);
-			var isIsland = tiles.length <= size;
+			var isIsland = tiles.size() <= size;
 
 			if (isIsland) {
-				visited.push(nextTile);
+				visited.add(nextTile);
 			}
 
 			// for (t in tiles) {
@@ -45,7 +47,7 @@ class RegionManager {
 				if (isIsland) {
 					cleanedMap.set(t.x, t.y, 0);
 				} else {
-					visited.push(t);
+					visited.add(t);
 				}
 			}
 		}
@@ -63,15 +65,15 @@ class RegionManager {
 	 */
 	public static function removeIslands(map:Map2d, tileType:Int = 1):Map2d {
 		var nextTile:Tile2d;
-		var visited = new Array<Tile2d>();
+		var visited = new Set<Tile2d>(t -> map.XYtoIndex(t.x, t.y));
 
 		var cleanedMap = new Map2d(map._width, map._height);
 		for (i in 0...map._mapData.length) {
 			cleanedMap._mapData[i] = map._mapData[i];
 		}
 
-		while ((nextTile = cleanedMap.getFirstTileOfType(tileType, visited)) != null) {
-			visited.push(nextTile);
+		while ((nextTile = cleanedMap.getFirstTileOfTypeSet(tileType, visited)) != null) {
+			visited.add(nextTile);
 			var tiles = cleanedMap.floodFill(nextTile.x, nextTile.y, tileType);
 			var isIsland = true;
 
@@ -99,101 +101,189 @@ class RegionManager {
 	):Map2d {
 		var borderMap = new Map2d(map._width, map._height);
 
-		for (i in 0...map._mapData.length) {
-			borderMap._mapData[i] = map._mapData[i] != borderType ? 0 : 1;
+		for (tile in borderMap) {
+			var value = tile.val == borderType ? 1 : 0;
+			borderMap.set(tile.x, tile.y, value);
 		}
 
-		var nextBorder:Tile2d;
 		var nextTag = startTag;
+		var nextBorder = borderMap.getFirstTileOfType(borderType);
 
-		while ((nextBorder = borderMap.getFirstTileOfType(borderType)) != null) {
+		while (nextBorder != null) {
 			for (t in borderMap.floodFill(nextBorder.x, nextBorder.y, borderType)) {
 				borderMap.set(t.x, t.y, nextTag);
 			}
-
 			nextTag++;
+			nextBorder = borderMap.getFirstTileOfType(borderType);
 		}
 
 		return borderMap;
 	}
 
 	public static function findAndTagRegions(map:Map2d, ?depth:Int = 2):Map2d {
-		var regionmap = new Map2d(map._width, map._height, 0);
-		for (i in 0...map._mapData.length) {
-			var val = map._mapData[i] > depth ? depth : map._mapData[i];
-			regionmap._mapData[i] = val;
+		var regionmap = Map2dExtensions.clone(map);
+
+		for (tile in regionmap) {
+			var val = tile.val >= depth ? depth : tile.val;
+			regionmap.set(tile.x, tile.y, val);
 		}
 
-		var nextRegion:Tile2d;
-		var nextTag = depth + 1;
+		var nextTag = depth;
+		var nextRegion = regionmap.getFirstTileOfType(depth);
 
-		while ((nextRegion = regionmap.getFirstTileOfType(depth)) != null) {
-			for (t in regionmap.floodFill(nextRegion.x, nextRegion.y, depth)) {
-				regionmap.set(t.x, t.y, nextTag);
+		while (nextRegion != null) {
+			for (tile in regionmap.floodFill(nextRegion.x, nextRegion.y, depth)) {
+				regionmap.set(tile.x, tile.y, nextTag);
 			}
 
 			nextTag++;
+			nextRegion = regionmap.getFirstTileOfType(depth);
 		}
 
 		return regionmap;
 	}
 
-	public static function expandRegionsByOne(map:Map2d, startTag:Int = 3) {
+	/**
+	 * Raises the min 'depth' by one, simulating water rising.
+	 *
+	 * @param map The map to expand regions for.
+	 * @param startTag The lowest value for a region tag/id.
+	 * @returns The new expanded map.
+	 */
+	public static function raiseLevel(map:Map2d, startTag:Int) {
 		var expandedMap = Map2dExtensions.clone(map);
-		var calls = 0;
 
-		for (tile in map.tiles()) {
-			calls++;
-			if (tile.val >= startTag) {
-				continue;
-			}
-			for (n in map.getNeighbors(tile.x, tile.y)) {
-				if (n.val < startTag) {
-					continue;
-				}
-				expandedMap.set(tile.x, tile.y, n.val);
+		for (tile in map) {
+			if (tile.val < startTag && tile.val != 0) {
+				expandedMap.set(tile.x, tile.y, tile.val + 1);
 			}
 		}
 
-		trace('calls: ${calls}');
+		return expandedMap;
+	}
+
+	/**
+	 * @param map The map to expand regions for.
+	 * @param startTag The lowest value for a region tag/id.
+	 * @returns The new expanded map.
+	 */
+	public static function expandRegionsByOne(map:Map2d, startTag:Int) {
+		var expandedMap = Map2dExtensions.clone(map);
+		var emptyTag = startTag - 1;
+		var wallTag = 0;
+
+		for (regionTile in map) {
+			if (regionTile.val < startTag) {
+				continue;
+			}
+
+			var neighbors = expandedMap
+				.getNeighbors(regionTile.x, regionTile.y)
+				.filter(t -> t.val == emptyTag);
+
+			for (n in neighbors) {
+				var nn = expandedMap.getNeighbors(n.x, n.y, 1, false);
+
+				var otherRegionsTouched = nn
+					.filter(t -> t.val >= startTag && t.val != regionTile.val)
+					.length;
+
+				var open = nn
+					.filter(t -> t.val == emptyTag)
+					.length;
+
+				var walls = nn
+					.filter(t -> t.val == wallTag)
+					.length;
+
+				// if at border of two regions.
+				if (otherRegionsTouched > 0) {
+					continue;
+				}
+
+				// if corridor
+				if (walls >= 2 && open >= 1) {
+					continue;
+				}
+
+				expandedMap.set(n.x, n.y, regionTile.val);
+			}
+		}
+
+		return raiseLevel(expandedMap, startTag - 1);
+	}
+
+	public static function fillAlcoves(map:Map2d, startTag:Int) {
+		var expandedMap = Map2dExtensions.clone(map);
+
+		var visited = new Set<Tile2d>((tile) -> expandedMap.XYtoIndex(tile.x, tile.y));
+		var first = expandedMap.getFirstTileOfTypeSet(startTag - 1, visited);
+
+		while (first != null) {
+			var fill = expandedMap.floodFill(first.x, first.y, startTag - 1, true);
+
+			var allneighbors = new Array<Tile2d>();
+
+			for (tile in fill) {
+				allneighbors = allneighbors.concat(expandedMap.getNeighbors(tile.x, tile.y));
+				visited.add(tile);
+			}
+
+			var regions = allneighbors.filter(t -> t.val >= startTag);
+			if (regions.length > 0) {
+				var single = regions.find(t -> t.val != regions[0].val) == null;
+				if (single) {
+					for (tile in fill) {
+						expandedMap.set(tile.x, tile.y, regions[0].val);
+					}
+				}
+			} else {
+				for (tile in fill) {
+					expandedMap.set(tile.x, tile.y, 0);
+				}
+			}
+
+			first = expandedMap.getFirstTileOfTypeSet(startTag - 1, visited);
+		}
 
 		return expandedMap;
 	}
 
 	public static function expandRegions(map:Map2d, startTag:Int = 3, eatWalls = false) {
-		//     for (_ in 0...100) {
-		//       for (currentTag in startTag...startTag + 500) {
-		//         var tilesToPaint = new Array<Int>();
-		//         for (x in 0...map._width) {
-		//           for (y in 0...map._height) {
-		//             if (map.get(x, y) == currentTag) {
-		//               var neighbors = map.getNeighbors(x, y, 1, true);
-		//               for (n in neighbors) {
-		//                 if (n.val < startTag) {
-		//                   if (!eatWalls && n.val == 0) {
-		//                     continue;
-		//                   }
-		//                   var nWalls = map.getNeighborCount(n.x, n.y, 0, 1, true);
-		//                   var nOpen = 0;
-		//                   for (i in 1...startTag) {
-		//                     nOpen += map.getNeighborCount(n.x, n.y, i, 1, true);
-		//                   }
-		//                   var nTag = map.getNeighborCount(n.x, n.y, currentTag, 1, true);
-		//                   if (nWalls + nOpen + nTag == 8) {
-		//                     tilesToPaint.push(map.XYtoIndex(n.x, n.y));
-		//                   }
-		//                 }
-		//               }
-		//             }
-		//           }
-		//         }
-		//
-		//         for (c in tilesToPaint) {
-		//           map._mapData[c] = currentTag;
-		//         }
-		//       }
-		//     }
-		expandRegionsByOne(map, startTag = 3);
+		var expandedMap = Map2dExtensions.clone(map);
+
+		for (_ in 0...100) {
+			for (currentTag in startTag...startTag + 500) {
+				var tilesToPaint = new Array<Int>();
+				for (tile in expandedMap) {
+					if (tile.val != currentTag) {
+						continue;
+					}
+
+					for (neighbor in expandedMap.getNeighbors(tile.x, tile.y)) {
+						if (neighbor.val > startTag) {
+							continue;
+						}
+						if (!eatWalls && neighbor.val == 0) {
+							continue;
+						}
+						var nWalls = expandedMap.getNeighborCount(neighbor.x, neighbor.y, 0);
+						var nOpen = 0;
+						for (i in 1...startTag) {
+							nOpen += expandedMap.getNeighborCount(neighbor.x, neighbor.y, i);
+						}
+						var nTag = expandedMap.getNeighborCount(neighbor.x, neighbor.y, currentTag);
+						if (nWalls + nOpen + nTag == 8) {
+							tilesToPaint.push(expandedMap.XYtoIndex(neighbor.x, neighbor.y));
+						}
+					}
+				}
+
+				for (index in tilesToPaint) {
+					expandedMap._mapData[index] = currentTag;
+				}
+			}
+		}
 		return map;
 	}
 }

@@ -19,7 +19,7 @@ class CheckConnectivity {
 
 		// Get another tile of the same type, ignoring the ones we just filled.
 		// If found, this means map is not connected.
-		firstTile = map.getFirstTileOfType(tile, filledTiles);
+		firstTile = map.getFirstTileOfTypeSet(tile, filledTiles);
 
 		return firstTile == null;
 	}

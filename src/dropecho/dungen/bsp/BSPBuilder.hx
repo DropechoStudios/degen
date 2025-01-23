@@ -54,64 +54,134 @@ class BSPBuilder extends BSPBuilderConfig {
 	}
 
 	private function makeSplit(node:BSPNode<BSPData>):Void {
-		var val = node.value;
-		var lData:BSPData;
-		var rData:BSPData;
+		var data = node.value;
+		var left:BSPNode<BSPData>;
+		var right:BSPNode<BSPData>;
 
-		// Times two because you need to fit two child nodes into this one.
-		if (val.width < minWidth * 2 && val.height < minHeight * 2) {
+		var tallEnough = data.height > minHeight * 2;
+		var wideEnough = data.width > minWidth * 2;
+
+		var isTooSmallToSplit = !tallEnough && !wideEnough;
+
+		if (isTooSmallToSplit) {
 			return;
 		}
 
-		var splitAt = 0;
-		var splitHeight:Bool = random.random() > 0.5;
-
-		// Change split direction if one dir is smaller than the ratio allows
-		if (val.width >= val.height * ratio) {
-			splitHeight = false;
-		} else if (val.height >= val.width * ratio) {
-			splitHeight = true;
-		} else {
-			return;
-		}
+		var splitHeight = (random.random() > 0.5 && tallEnough) || !wideEnough;
 
 		if (splitHeight) {
-			splitAt = random.randomInt(0, val.height - (minHeight * 2)) + minHeight;
-			var rHeight = val.height - splitAt;
+			var h = data.height;
+			var splitAt = random.randomInt(minHeight, h - minHeight);
+			var rHeight = data.height - splitAt;
 
-			lData = new BSPData({
+			left = new BSPNode(new BSPData({
 				height: splitAt,
-				width: val.width,
-				x: val.x,
-				y: val.y
-			});
-			rData = new BSPData({
+				width: data.width,
+				x: data.x,
+				y: data.y
+			}));
+			right = new BSPNode(new BSPData({
 				height: rHeight,
-				width: val.width,
-				x: val.x,
-				y: val.y + splitAt
-			});
-		} else {
-			splitAt = random.randomInt(0, val.width - (minWidth * 2)) + minWidth;
-			var rWidth = val.width - splitAt;
+				width: data.width,
+				x: data.x,
+				y: data.y + splitAt
+			}));
+		} else if (wideEnough) {
+			var w = data.width;
+			var splitAt = random.randomInt(minWidth, w - minWidth);
+			var rWidth = data.width - splitAt;
 
-			lData = new BSPData({
-				height: val.height,
+			left = new BSPNode(new BSPData({
+				height: data.height,
 				width: splitAt,
-				x: val.x,
-				y: val.y
-			});
-			rData = new BSPData({
-				height: val.height,
+				x: data.x,
+				y: data.y
+			}));
+			right = new BSPNode(new BSPData({
+				height: data.height,
 				width: rWidth,
-				x: val.x + splitAt,
-				y: val.y
-			});
+				x: data.x + splitAt,
+				y: data.y
+			}));
+		} else {
+			return;
 		}
 
-		node.setLeft(new BSPNode(lData));
-		node.setRight(new BSPNode(rData));
+		node.setLeft(left);
+		node.setRight(right);
 
 		return;
 	}
+
+	//   private function makeSplit(node:BSPNode<BSPData>):Void {
+	//     var val = node.value;
+	//     var lData:BSPData;
+	//     var rData:BSPData;
+	//
+	//     // Times two because you need to fit two child nodes into this one.
+	//     if (val.width < minWidth * 2 && val.height < minHeight * 2) {
+	//       return;
+	//     }
+	//
+	//     var splitAt = 0;
+	//     var splitHeight:Bool = random.random() > 0.5;
+	//
+	//     // Change split direction if one dir is smaller than the ratio allows
+	//     if (val.width >= val.height * ratio) {
+	//       splitHeight = false;
+	//     } else if (val.height >= val.width * ratio) {
+	//       splitHeight = true;
+	//     } else {
+	//       return;
+	//     }
+	//
+	//     if (splitHeight) {
+	//       var rnd = random.randomInt(minHeight, Std.int(minHeight * 2));
+	//       splitAt = rnd - 1;
+	//       var rHeight = val.height - splitAt;
+	//
+	//       if (rHeight < minHeight) {
+	//         return;
+	//       }
+	//
+	//       lData = new BSPData({
+	//         height: splitAt,
+	//         width: val.width,
+	//         x: val.x,
+	//         y: val.y
+	//       });
+	//       rData = new BSPData({
+	//         height: rHeight,
+	//         width: val.width,
+	//         x: val.x,
+	//         y: val.y + splitAt
+	//       });
+	//     } else {
+	//       //       splitAt = random.randomInt(0, val.width - (minWidth * 2)) + minWidth;
+	//       var rnd = random.randomInt(minWidth, Std.int(minWidth * 2));
+	//       splitAt = rnd - 1;
+	//       var rWidth = val.width - splitAt;
+	//       if (rWidth < minHeight) {
+	//         return;
+	//       }
+	//
+	//       lData = new BSPData({
+	//         height: val.height,
+	//         width: splitAt,
+	//         x: val.x,
+	//         y: val.y
+	//       });
+	//       rData = new BSPData({
+	//         height: val.height,
+	//         width: rWidth,
+	//         x: val.x + splitAt,
+	//         y: val.y
+	//       });
+	//     }
+	//
+	//     node.setLeft(new BSPNode(lData));
+	//     node.setRight(new BSPNode(rData));
+	//
+	//     return;
+	//   }
 }

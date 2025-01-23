@@ -43,8 +43,29 @@ class DistanceFillTests extends Test {
 
 		var distanceMap = map.distanceFill(1);
 
-		for (i in 0...distanceMap._mapData.length) {
-			Assert.equals(expected[i], distanceMap._mapData[i]);
-		}
+		//     trace(map.toString());
+		//     trace(distanceMap.toString());
+		Assert.same(expected, distanceMap._mapData);
 	}
+
+	//   public function test_distance_fill_walls() {
+	//     map._mapData = [
+	//       0, 0, 0, 0,
+	//       0, 1, 1, 0,
+	//       0, 1, 1, 1,
+	//       0, 1, 1, 1
+	//     ];
+	//
+	//     var expected = [
+	//       0, 0, 0, 0,
+	//       0, 1, 1, 0,
+	//       0, 1, 1, 1,
+	//       0, 1, 2, 2
+	//     ];
+	//
+	//     var distanceMap = map.distanceFill(0);
+	//     //     trace(map.toString());
+	//     //     trace(distanceMap.toString());
+	//     Assert.same(expected, distanceMap._mapData);
+	//   }
 }

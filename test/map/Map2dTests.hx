@@ -1,17 +1,17 @@
 package map;
 
+import dropecho.dungen.generators.VillageGenerator;
 import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
-import dropecho.dungen.bsp.BSPBuilder;
-// import dropecho.dungen.generators.ConvChain;
+import dropecho.dungen.bsp.BSPBuilder; // import dropecho.dungen.generators.ConvChain;
 // import dropecho.dungen.bsp.BSPData;
-import dropecho.dungen.generators.RoomGenerator;
-
-// import dropecho.dungen.generators.MixedGenerator;
+import dropecho.dungen.generators.RoomGenerator; // import dropecho.dungen.generators.MixedGenerator;
 // import dropecho.dungen.generators.RandomGenerator;
 // import dropecho.dungen.generators.CAGenerator;
 // import dropecho.dungen.generators.WalkGenerator;
+import dropecho.dungen.generators.CellularGenerator;
+
 using dropecho.dungen.map.Map2dExtensions;
 using dropecho.dungen.map.extensions.Neighbors;
 using dropecho.dungen.map.extensions.Splat;
@@ -162,17 +162,7 @@ class Map2dTests extends Test {
 		// trace(map);
 	}
 
-	public function test_bspMapTest() {
-		//     var opts = {
-		//       width: 24,
-		//       height: 12,
-		//       start_fill_percent: 64,
-		//       // tile_floor: 1,
-		//       // tile_wall: 0,
-		//       seed: "0"
-		//     };
-		//     var sample = WalkGenerator.generate(opts);
-
+	public function test_bsp_map() {
 		var bsp = new BSPBuilder({
 			width: 32,
 			height: 32,
@@ -183,33 +173,24 @@ class Map2dTests extends Test {
 		})
 			.generate();
 
-		var map = RoomGenerator.buildRooms(bsp);
+		//     var map = RoomGenerator.buildRooms(bsp);
+		var params = new VillageParams();
+		params.padding = 2;
+		var map = VillageGenerator.buildVillages(bsp, params);
+		trace(map.toPrettyString(['#', '.']));
+		Assert.isTrue(true);
+	}
 
-		//     var sample = new Map2d(4, 4);
-		//     sample._mapData = [
-		//       1, 1, 1, 1,
-		//       1, 0, 0, 0,
-		//       1, 0, 1, 0,
-		//       1, 0, 0, 0,
-		//     ];
-		//
-		// var sample = new Map2d(3, 3);
-		// sample._mapData = [0, 1, 1, 1, 1, 1, 1, 1, 1];
-		// sample._mapData = [1, 1, 1, 0, 0, 0, 0, 0, 0];
-		// var sample = new Map2d(5, 5);
-		// sample._mapData = [
-		//   0, 0, 1, 0, 0,
-		//   0, 1, 1, 1, 0,
-		//   1, 1, 1, 1, 1,
-		//   0, 1, 1, 1, 0,
-		//   0, 0, 1, 0, 0
-		// ];
+	@Ignored
+	public function test_cellular_map() {
+		var params = new CELLULAR_PARAMS();
+		params.start_fill_percent = 30;
+		params.passes = 2;
+		params.surviveCount = 4;
+		params.bornCount = 3;
 
-		//     trace(sample.toPrettyString());
-		//     var gen = new ConvChain(sample);
-		//     var map = gen.generate(80, 40, 3, 0.1, 4);
-
-		trace(map.toPrettyString());
+		var map = CellularGenerator.generate(params);
+		trace(map.toPrettyString(['#', '.']));
 		Assert.isTrue(true);
 	}
 }

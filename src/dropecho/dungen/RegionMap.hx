@@ -32,22 +32,27 @@ class RegionMap extends Map2d {
 	public function new(map:Map2d, depth:Int = 2, expand:Bool = true) {
 		super(map._width, map._height, 0);
 
-		var regionmap = map.clone();
+		var regionMap = map.clone();
 		// TODO: Allow options passed for island size min/max/removal?
 		// regionmap = regionmap.removeIslandsBySize(256);
 
-		regionmap = regionmap.distanceFill(0, false);
-		regionmap = regionmap.findAndTagRegions(depth);
-		if (expand) {
-			regionmap = regionmap.expandRegions(depth + 1);
-		} else {
-			if (depth > 1) {
-				regionmap = regionmap.expandRegionsByOne(depth);
-			}
+		regionMap = regionMap.distanceFill(0, true);
+		regionMap = regionMap.findAndTagRegions(depth);
+		//     trace(regionmap.toString());
+
+		//     if (expand) {
+		//       regionMap = regionMap.expandRegions(depth);
+		//     } else if (depth > 1) {
+		for (_ in 0...depth + 1) {
+			regionMap = regionMap.expandRegionsByOne(depth);
 		}
 
-		buildRegions(regionmap, depth);
-		buildBorders(RegionManager.findAndTagBorders(regionmap, 1, 128));
+		//     regionMap = regionMap.fillAlcoves(depth);
+		//       regionMap = regionMap.expandRegionsByOne(depth);
+		//     }
+
+		buildRegions(regionMap, depth);
+		buildBorders(RegionManager.findAndTagBorders(regionMap, 1, 128));
 		buildGraph();
 	}
 
@@ -163,7 +168,7 @@ class RegionMap extends Map2d {
 						}
 					}
 				} else {
-					output += val == 0 ? ' ' : cast val;
+					output += val == 0 ? '.' : cast val;
 				}
 			}
 			output += "\n";
@@ -205,7 +210,7 @@ class RegionMap extends Map2d {
 					}
 				}
 
-				output += isBorder ? 'b' : isRegion ? 'r' : ' ';
+				output += isBorder ? 'b' : isRegion ? 'r' : '.';
 			}
 			output += "\n";
 		}

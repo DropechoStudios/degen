@@ -35,9 +35,9 @@ class WFC {
 		var hashedPatterns = new Map<Int, Array<Int>>();
 
 		for (pattern in patterns) {
-			for (i in 0...pattern.patterns.length) {
-				var hash = pattern.hashes[i];
-				var variation = pattern.patterns[i];
+			for (i in 0...pattern._variations.length) {
+				var hash = pattern._hashes[i];
+				var variation = pattern._variations[i];
 
 				//         if (hashedPatterns.exists(hash)) {
 				//           var old = hashedPatterns.get(hash);
