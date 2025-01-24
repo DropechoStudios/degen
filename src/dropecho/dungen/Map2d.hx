@@ -36,6 +36,7 @@ class TileIterator {
 @:expose("dungen.Map2d")
 @:nativeGen
 @:using(dropecho.dungen.map.Map2dExtensions)
+@:using(dropecho.dungen.map.extensions.BFS)
 @:using(dropecho.dungen.map.extensions.CheckConnectivity)
 @:using(dropecho.dungen.map.extensions.DistanceFill)
 @:using(dropecho.dungen.map.extensions.FindAndReplace)

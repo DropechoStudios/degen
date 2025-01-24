@@ -177,7 +177,7 @@ class Map2dTests extends Test {
 		var params = new VillageParams();
 		params.padding = 2;
 		var map = VillageGenerator.buildVillages(bsp, params);
-		trace(map.toPrettyString(['#', '.']));
+		//     trace(map.toPrettyString(['#', '.']));
 		Assert.isTrue(true);
 	}
 
@@ -190,7 +190,7 @@ class Map2dTests extends Test {
 		params.bornCount = 3;
 
 		var map = CellularGenerator.generate(params);
-		trace(map.toPrettyString(['#', '.']));
+		//     trace(map.toPrettyString(['#', '.']));
 		Assert.isTrue(true);
 	}
 }

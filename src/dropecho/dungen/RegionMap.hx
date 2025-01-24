@@ -36,7 +36,7 @@ class RegionMap extends Map2d {
 		// TODO: Allow options passed for island size min/max/removal?
 		// regionmap = regionmap.removeIslandsBySize(256);
 
-		regionMap = regionMap.distanceFill(0, true);
+		regionMap = regionMap.distanceFill(0);
 		regionMap = regionMap.findAndTagRegions(depth);
 		//     trace(regionmap.toString());
 

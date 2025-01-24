@@ -7,7 +7,7 @@
 -lib dropecho.testing 
 -lib utest
 
-# -D UTEST_PATTERN=test_bsp_map
+# -D UTEST_PATTERN=test_distance_fill
 
 --each
 
