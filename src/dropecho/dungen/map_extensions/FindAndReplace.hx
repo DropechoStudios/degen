@@ -1,9 +1,9 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 import dropecho.dungen.Map2d;
-import dropecho.dungen.map.Pattern;
+import dropecho.dungen.Pattern;
 
-using dropecho.dungen.map.extensions.Splat;
+using dropecho.dungen.map_extensions.Splat;
 
 @:expose("dungen.FindAndReplace")
 class FindAndReplace {
@@ -15,10 +15,10 @@ class FindAndReplace {
 	):Map2d {
 		for (x in 0...map._width) {
 			for (y in 0...map._height) {
-				var patternIndex = pattern1.matchesIndex(map, x, y);
+				var patternIndex = pattern1.getMatchingVariationIndex(map, x, y);
 
 				if (patternIndex != -1) {
-					var splat = pattern2.indexToMap(patternIndex);
+					var splat = pattern2.variationToMap(patternIndex);
 					map.splat(splat, x, y, ignoreTile);
 				}
 			}

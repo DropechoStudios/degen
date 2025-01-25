@@ -1,4 +1,4 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 import haxe.ds.IntMap;
 import dropecho.dungen.Map2d;
@@ -37,7 +37,7 @@ function BFS(map:Map2d, x:Int, y:Int, value:Int):Array<Tile2d> {
 	while (currentIndex != -1) {
 		currentIndex = visited.get(currentIndex);
 		if (currentIndex != -1) {
-			path.push(map.IndexToXY(currentIndex));
+			path.push(map.indexToXY(currentIndex));
 		}
 	}
 

@@ -1,6 +1,6 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.regions.extensions;
 
-import dropecho.dungen.map.extensions.Utils.distanceToValue;
+import dropecho.dungen.map_extensions.Utils.distanceToValue;
 
 function regionFill(map:Map2d, wall:Int = 0, diagonal:Bool = true) {
 	var regionMapWallValue = 999999;
@@ -20,7 +20,7 @@ function regionFill(map:Map2d, wall:Int = 0, diagonal:Bool = true) {
 			continue;
 		}
 		// BFS for nearest wall, set value to dist.
-		var tile = regionMap.IndexToXY(i);
+		var tile = regionMap.indexToXY(i);
 		regionMap._mapData[i] = distanceToValue(regionMap, tile.x, tile.y, regionMapWallValue);
 		// if dist == 1, check neighbors, and add number of walls to tile value.
 	}

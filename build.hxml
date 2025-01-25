@@ -2,7 +2,7 @@
 -lib dropecho.ds
 -lib dropecho.interop
 
--cp src
+-p src
 -D analyzer-optimize
 -D dce=no
 

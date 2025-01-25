@@ -1,7 +1,7 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 import dropecho.dungen.Map2d;
-import dropecho.dungen.map.extensions.Utils.distanceToValue;
+import dropecho.dungen.map_extensions.Utils.distanceToValue;
 
 function distanceFill(map:Map2d, valueToFind:Int = 0, maxDistance:Int = 10) {
 	var distanceMap = new Map2d(map._width, map._height);

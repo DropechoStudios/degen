@@ -1,4 +1,4 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 using Lambda;
 

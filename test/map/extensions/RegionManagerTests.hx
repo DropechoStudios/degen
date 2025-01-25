@@ -1,14 +1,11 @@
 package map.extensions;
 
+import dropecho.dungen.regions.RegionManager;
 import utest.Assert;
 import utest.Test;
 import dropecho.dungen.bsp.BSPBuilder;
 import dropecho.dungen.generators.RoomGenerator;
 import dropecho.dungen.generators.CAGenerator;
-import dropecho.dungen.map.extensions.RegionManager;
-
-using dropecho.dungen.map.extensions.DistanceFill;
-using dropecho.dungen.map.Map2dExtensions;
 
 class RegionManagerTests extends Test {
 	@Ignored

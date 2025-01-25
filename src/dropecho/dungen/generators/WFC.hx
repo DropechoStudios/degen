@@ -1,8 +1,7 @@
 package dropecho.dungen.generators;
 
-import dropecho.dungen.generators.RandomGenerator;
 import dropecho.dungen.Map2d;
-import dropecho.dungen.map.Pattern;
+import dropecho.dungen.generators.RandomGenerator;
 
 @:expose("dungen.WFC")
 class WFC {

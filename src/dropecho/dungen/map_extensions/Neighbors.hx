@@ -1,4 +1,4 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 import dropecho.dungen.Map2d;
 
@@ -26,13 +26,14 @@ class Neighbors {
 	):Int {
 		var count = 0;
 		var isSelf = false;
-		var isNotOnMap = false;
+		var isOutsideOfMap = false;
+
 		for (i in -dist...dist + 1) {
 			for (j in -dist...dist + 1) {
 				isSelf = (i == 0 && j == 0);
-				isNotOnMap = x + i < 0 || x + i >= (map._width) || y + j < 0 || y + j >= (map._height);
+				isOutsideOfMap = x + i < 0 || x + i >= (map._width) || y + j < 0 || y + j >= (map._height);
 
-				if (isSelf || isNotOnMap) {
+				if (isSelf || isOutsideOfMap) {
 					continue;
 				}
 
@@ -40,8 +41,7 @@ class Neighbors {
 					continue;
 				}
 
-				var val = map.get(x + i, y + j);
-				if (val == neighborType) {
+				if (map.get(x + i, y + j) == neighborType) {
 					count++;
 				}
 			}
@@ -61,17 +61,58 @@ class Neighbors {
 		map:Map2d,
 		x:Int,
 		y:Int,
-		dist:Int = 1,
+		maxDist:Int = 1,
 		diagonal:Bool = true
 	):Array<Tile2d> {
-		var neighbors = new Array<Tile2d>(),
-			isSelf = false,
-			isNotOnMap = false;
+		var neighbors = new Array<Tile2d>();
+		var isSelf = false;
+		var isNotOnMap = false;
+
+		for (i in -maxDist...maxDist + 1) {
+			for (j in -maxDist...maxDist + 1) {
+				isSelf = (i == 0 && j == 0);
+				isNotOnMap = x + i < 0 || x + i >= (map._width) || y + j < 0 || y + j >= (map._height);
+
+				if (isSelf || isNotOnMap) {
+					continue;
+				}
+
+				if (!diagonal && ((i == j) || (i == -maxDist && j == maxDist) || (j == -maxDist && i == maxDist))) {
+					continue;
+				}
+
+				var val = map.get(x + i, y + j);
+
+				neighbors.push(new Tile2d(x + i, y + j, val));
+			}
+		}
+
+		return neighbors;
+	}
+
+	public static function getNeighborsAtDist(
+		map:Map2d,
+		x:Int,
+		y:Int,
+		dist:Int = 1,
+		diagonal:Bool = true
+	) {
+		var neighbors = new Array<Tile2d>();
 
 		for (i in -dist...dist + 1) {
 			for (j in -dist...dist + 1) {
-				isSelf = (i == 0 && j == 0);
-				isNotOnMap = x + i < 0 || x + i >= (map._width) || y + j < 0 || y + j >= (map._height);
+				// if not on first or last column, skip middle x's
+				if (j != -dist && j != dist && i > -dist && i < dist) {
+					continue;
+				}
+
+				// if not on first or last row, skip middle y's
+				if (i != -dist && i != dist && j > -dist && j < dist) {
+					continue;
+				}
+
+				var isSelf = (i == 0 && j == 0);
+				var isNotOnMap = x + i < 0 || x + i >= (map._width) || y + j < 0 || y + j >= (map._height);
 
 				if (isSelf || isNotOnMap) {
 					continue;

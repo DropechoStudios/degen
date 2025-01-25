@@ -1,10 +1,9 @@
-package dropecho.dungen;
+package dropecho.dungen.regions;
 
-import dropecho.dungen.map.extensions.RegionManager;
-import dropecho.ds.GraphNode;
-import dropecho.ds.Graph;
-import dropecho.dungen.Map2d.Tile2d;
 import dropecho.interop.AbstractMap;
+import dropecho.ds.Graph;
+import dropecho.ds.GraphNode;
+import dropecho.dungen.Tile2d;
 
 using Lambda;
 
@@ -105,7 +104,7 @@ class RegionMap extends Map2d {
 					region = regions.get(regionTileId);
 				}
 
-				region.tiles.push(regionmap.IndexToXY(tile));
+				region.tiles.push(regionmap.indexToXY(tile));
 			}
 		}
 	}
@@ -125,12 +124,13 @@ class RegionMap extends Map2d {
 				} else {
 					border = borders.get(borderTile);
 				}
-				var tileData = bordermap.IndexToXY(tile);
+				var tileData = bordermap.indexToXY(tile);
 				border.tiles.push(tileData);
 			}
 		}
 	}
 
+	@ignoreInstrument
 	public function toStringSingleRegion(regionId:Int) {
 		var chars = new Array<String>();
 		for (i in 0...255) {
@@ -140,6 +140,7 @@ class RegionMap extends Map2d {
 		return toPrettyString(chars);
 	}
 
+	@ignoreInstrument
 	public function toRegionBorderIdString() {
 		var output = "\n MAP2d: \n\n";
 
@@ -177,6 +178,7 @@ class RegionMap extends Map2d {
 		return output;
 	}
 
+	@ignoreInstrument
 	public function toRegionBorderString() {
 		var output = "\n MAP2d: \n\n";
 

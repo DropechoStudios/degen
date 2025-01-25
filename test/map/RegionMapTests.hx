@@ -4,14 +4,9 @@ import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
 import dropecho.dungen.generators.CAGenerator;
-import dropecho.dungen.RegionMap;
+import dropecho.dungen.regions.RegionMap;
 import dropecho.dungen.bsp.BSPBuilder;
 import dropecho.dungen.generators.RoomGenerator;
-
-using dropecho.dungen.map.extensions.DistanceFill;
-using dropecho.dungen.map.extensions.RegionManager;
-using dropecho.dungen.map.extensions.Utils;
-using dropecho.dungen.map.Map2dExtensions;
 
 class RegionMapTests extends Test {
 	public function test_manualTest() {

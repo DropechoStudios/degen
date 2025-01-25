@@ -1,10 +1,9 @@
 package map.extensions;
 
+import dropecho.dungen.Tile2d;
 import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
-
-using dropecho.dungen.map.extensions.GetFirstTileOfType;
 
 class GetFirstTileOfTypeTests extends Test {
 	var map:Map2d;
@@ -39,7 +38,7 @@ class GetFirstTileOfTypeTests extends Test {
 	public function test_get_first_empty_of_1_on_manually_filled_array_with_ignore_array_should_return_null() {
 		map.set(0, 0, 1);
 
-		var ignore = map.IndexToXY(0);
+		var ignore = map.indexToXY(0);
 		var ignoreArray = new Array<Tile2d>();
 
 		ignoreArray.push(ignore);

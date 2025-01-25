@@ -1,11 +1,27 @@
 -cp src
 -cp test
 
+-D analyzer-optimize
+
 -lib seedyrng
 -lib dropecho.ds 
 -lib dropecho.interop 
 -lib dropecho.testing 
 -lib utest
+-lib instrument
+
+# -D profiler-console-summary-reporter
+# -D profiler-console-hierarchy-reporter
+# -D coverage-console-summary-reporter
+# -D coverage-console-package-summary-reporter
+-D coverage-console-file-summary-reporter
+
+# -D coverage-lcov-reporter=artifacts/lcov.info
+# -D profiler-csv-reporter=artifacts/profile.csv
+
+--macro instrument.Instrumentation.coverage([], ['src'], [])
+# --macro instrument.Instrumentation.profiling([], ['src'], [])
+# -D instrument-quiet
 
 # -D UTEST_PATTERN=test_distance_fill
 
@@ -13,7 +29,7 @@
 
 --next
 -lib hxnodejs
--D js-es=6
+# -D js-es=6
 -js artifacts/js_test.cjs
 
 # --next

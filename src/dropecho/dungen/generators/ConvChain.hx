@@ -1,9 +1,9 @@
 package dropecho.dungen.generators;
 
-import seedyrng.Random;
-import dropecho.dungen.generators.RandomGenerator;
 import dropecho.dungen.Map2d;
-import dropecho.dungen.map.Pattern;
+import dropecho.dungen.Pattern;
+import dropecho.dungen.generators.RandomGenerator;
+import seedyrng.Random;
 
 @:expose("dungen.ConvChain")
 class ConvChain {

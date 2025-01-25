@@ -1,4 +1,4 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 typedef Rect = {
 	var x:Int;
@@ -6,32 +6,6 @@ typedef Rect = {
 	var width:Int;
 	var height:Int;
 };
-
-/**
- * @param map - The map to search on.
- * @param fromX - The starting x coordinate.
- * @param fromY - The starting y coordinate.
- * @param valueToFind - The value to find the distance to (closest tile with this value.)
- * @param [maxDistance] - The max distance to search, will return this if further/not found.
- * @returns The distance to the closest tile with the valueToFind.
- */
-function distanceToValue(map:Map2d, fromX:Int, fromY:Int, valueToFind:Int, maxDistance:Int = 10) {
-	var dist = 1;
-	while (dist <= maxDistance) {
-		if (map.get(fromX, fromY) == valueToFind) {
-			return 0;
-		}
-
-		var count = map.getNeighborCount(fromX, fromY, valueToFind, dist);
-
-		if (count > 0) {
-			return dist;
-		}
-		dist++;
-	}
-
-	return maxDistance;
-}
 
 /**
  * Return a portion of the map, defined by the rect.
@@ -64,8 +38,8 @@ function getRect(map:Map2d, rect:Rect, wrap:Bool = false):Array<Int> {
  * @param data - The value to set each contained tile to.
  */
 function setRect(map:Map2d, rect:Rect, data:Int):Void {
-	for (j in rect.y...rect.y + rect.height + 1) {
-		for (i in rect.x...rect.x + rect.width + 1) {
+	for (j in rect.y...rect.y + rect.height) {
+		for (i in rect.x...rect.x + rect.width) {
 			map.set(i, j, data);
 		}
 	}
@@ -88,7 +62,7 @@ function checkOverlap(r1:Rect, r2:Rect):Bool {
 
 /**
  * Checks if the inner rectangle is contained by the outer.
- * I.E. is it completely inside of it.
+ * I.E. is it completely inside of it (same size rect is true).
  * @param r1 - The outer rectangle. 
  * @param r2 - The inner rectangle. 
  * @return true if r2 is contained by r1
@@ -99,19 +73,5 @@ function contains(r1:Rect, r2:Rect):Bool {
 	var r2p1 = {x: r2.x, y: r2.y};
 	var r2p2 = {x: r2.x + r2.width, y: r2.y + r2.height};
 
-	return (r2p2.x < r1p2.x && r2p2.y < r1p2.y && r2p1.x > r1p1.x && r2p1.y > r1p1.y);
-}
-
-function isOverlappingArray(r1, a:Array<Dynamic>) {
-	for (r in a) {
-		if (r == r1) {
-			continue; // Ignore itself.
-		}
-
-		if (Utils.checkOverlap(r1, r)) {
-			return true;
-		}
-	}
-
-	return false;
+	return (r2p2.x <= r1p2.x && r2p2.y <= r1p2.y && r2p1.x >= r1p1.x && r2p1.y >= r1p1.y);
 }

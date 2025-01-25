@@ -1,4 +1,4 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.map_extensions;
 
 import dropecho.ds.Set;
 import dropecho.dungen.Map2d;

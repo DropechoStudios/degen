@@ -1,15 +1,10 @@
-package dropecho.dungen.map.extensions;
+package dropecho.dungen.regions;
 
-import dropecho.ds.Set;
 import dropecho.dungen.Map2d;
+import dropecho.ds.Set;
 
-using dropecho.dungen.map.extensions.GetFirstTileOfType;
-using dropecho.dungen.map.extensions.FloodFill;
-using dropecho.dungen.map.Map2dExtensions;
-using dropecho.dungen.map.extensions.Neighbors;
 using Lambda;
 
-@:expose("dungen.RegionManager")
 class RegionManager {
 	/**
 	 * Remove islands by finding them and if they are below the passed size, fill them with walls. 
@@ -19,7 +14,7 @@ class RegionManager {
 	 * @param [tileType] - The type of tile to find and fill islands of. 
 	 * @return The cleaned map. 
 	 */
-	public static function removeIslandsBySize(map:Map2d, size:Int = 4, tileType:Int = 1):Map2d {
+	static public function removeIslandsBySize(map:Map2d, size:Int = 4, tileType:Int = 1):Map2d {
 		var cleanedMap = new Map2d(map._width, map._height);
 		var nextTile:Tile2d;
 		var visited = new Set<Tile2d>(t -> cleanedMap.XYtoIndex(t.x, t.y));
@@ -56,14 +51,13 @@ class RegionManager {
 	}
 
 	/**
-	 * Remove islands by finding if they do not connect to any tiles other 
-	 * than the same type or walls (0).
+	 * Remove islands by finding if they do not connect to any tiles other than the same type or walls (0).
 	 *
 	 * @param map - The map to remove islands from.
 	 * @param [tileType] - The tile type to find and fill islands of.
 	 * @return The cleaned map.
 	 */
-	public static function removeIslands(map:Map2d, tileType:Int = 1):Map2d {
+	static public function removeIslands(map:Map2d, tileType:Int = 1):Map2d {
 		var nextTile:Tile2d;
 		var visited = new Set<Tile2d>(t -> map.XYtoIndex(t.x, t.y));
 
@@ -94,7 +88,7 @@ class RegionManager {
 		return cleanedMap;
 	}
 
-	public static function findAndTagBorders(
+	static public function findAndTagBorders(
 		map:Map2d,
 		borderType:Int = 1,
 		startTag:Int = 2
@@ -120,8 +114,8 @@ class RegionManager {
 		return borderMap;
 	}
 
-	public static function findAndTagRegions(map:Map2d, ?depth:Int = 2):Map2d {
-		var regionmap = Map2dExtensions.clone(map);
+	static public function findAndTagRegions(map:Map2d, ?depth:Int = 2):Map2d {
+		var regionmap = map.clone();
 
 		for (tile in regionmap) {
 			var val = tile.val >= depth ? depth : tile.val;
@@ -150,8 +144,8 @@ class RegionManager {
 	 * @param startTag The lowest value for a region tag/id.
 	 * @returns The new expanded map.
 	 */
-	public static function raiseLevel(map:Map2d, startTag:Int) {
-		var expandedMap = Map2dExtensions.clone(map);
+	static public function raiseLevel(map:Map2d, startTag:Int) {
+		var expandedMap = map.clone();
 
 		for (tile in map) {
 			if (tile.val < startTag && tile.val != 0) {
@@ -167,8 +161,8 @@ class RegionManager {
 	 * @param startTag The lowest value for a region tag/id.
 	 * @returns The new expanded map.
 	 */
-	public static function expandRegionsByOne(map:Map2d, startTag:Int) {
-		var expandedMap = Map2dExtensions.clone(map);
+	static public function expandRegionsByOne(map:Map2d, startTag:Int) {
+		var expandedMap = map.clone();
 		var emptyTag = startTag - 1;
 		var wallTag = 0;
 
@@ -213,8 +207,8 @@ class RegionManager {
 		return raiseLevel(expandedMap, startTag - 1);
 	}
 
-	public static function fillAlcoves(map:Map2d, startTag:Int) {
-		var expandedMap = Map2dExtensions.clone(map);
+	static public function fillAlcoves(map:Map2d, startTag:Int) {
+		var expandedMap = map.clone();
 
 		var visited = new Set<Tile2d>((tile) -> expandedMap.XYtoIndex(tile.x, tile.y));
 		var first = expandedMap.getFirstTileOfTypeSet(startTag - 1, visited);
@@ -249,8 +243,8 @@ class RegionManager {
 		return expandedMap;
 	}
 
-	public static function expandRegions(map:Map2d, startTag:Int = 3, eatWalls = false) {
-		var expandedMap = Map2dExtensions.clone(map);
+	static public function expandRegions(map:Map2d, startTag:Int = 3, eatWalls = false) {
+		var expandedMap = map.clone();
 
 		for (_ in 0...100) {
 			for (currentTag in startTag...startTag + 500) {

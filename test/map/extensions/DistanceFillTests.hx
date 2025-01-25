@@ -4,8 +4,6 @@ import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
 
-using dropecho.dungen.map.extensions.DistanceFill;
-
 class DistanceFillTests extends Test {
 	var map:Map2d;
 

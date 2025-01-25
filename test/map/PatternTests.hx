@@ -3,7 +3,7 @@ package map;
 import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
-import dropecho.dungen.map.Pattern.Pattern;
+import dropecho.dungen.Pattern;
 
 class PatternTests extends Test {
 	var map:Map2d;

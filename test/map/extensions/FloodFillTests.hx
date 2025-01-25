@@ -4,8 +4,6 @@ import utest.Assert;
 import utest.Test;
 import dropecho.dungen.Map2d;
 
-using dropecho.dungen.map.extensions.FloodFill;
-
 class FloodFillTests extends Test {
 	var map:Map2d;
 

@@ -1,7 +1,7 @@
 package dropecho.dungen.generators;
 
-import dropecho.dungen.generators.RandomGenerator;
 import dropecho.dungen.Map2d;
+import dropecho.dungen.generators.RandomGenerator;
 
 @:expose("dungen.CELLULAR_PARAMS")
 class CELLULAR_PARAMS {
@@ -28,7 +28,7 @@ class CellularGenerator {
 		var temp = map.clone();
 
 		for (_ in 0...params.passes) {
-			for (tile in map.tiles()) {
+			for (tile in map) {
 				var neighborCount = map.getNeighborCount(tile.x, tile.y, params.tile_floor);
 				if (tile.val == params.tile_floor && neighborCount > params.surviveCount) {
 					continue;
