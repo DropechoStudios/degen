@@ -16,7 +16,7 @@
 # -D coverage-console-package-summary-reporter
 -D coverage-console-file-summary-reporter
 
-# -D coverage-lcov-reporter=artifacts/lcov.info
+-D coverage-lcov-reporter=artifacts/lcov.info
 # -D profiler-csv-reporter=artifacts/profile.csv
 
 --macro instrument.Instrumentation.coverage([], ['src'], [])

@@ -12,7 +12,7 @@ class GetFirstTileOfType {
 		tileVal:Int = 0,
 		ignore:Array<Tile2d> = null
 	):Null<Tile2d> {
-		function isIgnored(check) {
+		inline function isIgnored(check) {
 			if (ignore == null) {
 				return false;
 			}
